@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+  <title>Test</title>
+  <link type="text/css" href="css/themename/jquery-ui-1.7.1.custom.css" rel="Stylesheet" />
+  <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.7.1.custom.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+</head>
+<body style="background-color: LAVENDER">
+
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-center">
+      <h3 >Tasks</h3>
+    </div>
+  </nav>
+
+  <div class="row">
+    <div  id="principal-screen">
+      <div class="panel panel-default" style=" margin-top: 75px;
+       margin-left: 75px; margin-right: 75px; margin-bottom: 15px;">
+        <div class="panel-body">
+          <div class="form-group" >
+            <div class="col-lg-4 col-lg-offset-4" >
+              <input type="text" class="form-control" id="input_id">
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-default" id="add_input">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div hidden class="col-sm-6" id="hidden-col" >
+      <div class="panel panel-default" style=" margin-top: 75px;
+       margin-left: 75px; margin-right: 75px; height: 500px">
+        <div class="panel-body text-center" id="task-panel">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="text/template" id="TaskBox">
+    <div class="panel panel-default task-item ui-widget-content draggable" style=" margin-top: 15px;
+   margin-left: 75px; margin-right: 75px; margin-bottom: 15px;">
+      <div class="panel-body" id="this-task">
+        <div class="form-group">
+          <div class="row" style="margin-bottom: 10px">
+            <div class="col-sm-2">
+              <div id="task">
+                <%= task %>
+              </div>
+            </div>
+            <div class="col-sm-2 pull-right">
+              <button type="button" class="btn" id="task-color" style="display: none; margin-left: -190px;margin-right: 160px;height: 30px;width: 30px;"></button>
+              <button type="button" class="btn btn-default rmv-btn" style="margin-left: -150px;">Remove</button>
+              <button type="button" class="btn btn-default det-btn" >Show detailes</button>
+            </div>
+          </div>
+          <div hidden class="det-input">
+            <div class="row">
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow=0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                  <span class="sr-only">0% Complete</span>
+                </div>
+              </div>
+              <div class="text-center task-type" style="margin-bottom: 10px; margin-top: -10px;">
+                <button type="button" class="btn btn-lg task-btn" style="margin-left: 10px; margin-right: 10px; background-color: yellow"></button>
+                <button type="button" class="btn btn-lg task-btn" style="margin-left: 10px; margin-right: 10px; background-color: orange"></button>
+                <button type="button" class="btn btn-lg task-btn" style="margin-left: 10px; margin-right: 10px; background-color: red"></button>
+                <button type="button" class="btn btn-lg task-btn" style="margin-left: 10px; margin-right: 10px; background-color: magenta"></button>
+                <button type="button" class="btn btn-lg task-btn" style="margin-left: 10px; margin-right: 10px; background-color: blue"></button>
+                <button type="button" class="btn btn-lg task-btn" style="margin-left: 10px; margin-right: 10px; background-color: green"></button>
+              </div>
+              <div>
+                <button type="button" id="slider" class="btn"  style="display: none; height: 18px; margin-bottom: 15px; margin-left: 15px;"></button>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control input-detailes">
+              </div>
+              <div class="col-sm-2">
+                <button type="button" class="btn btn-default pull-right add-detailes" style="margin-right: -50px;">
+                  Add detailes
+                </button>
+              </div>
+            </div>
+            <div class="row comments" style="margin-top: 10px">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="infoWell">
+    <div class="info-well">
+      <div class="col-sm-8 ">
+        <div class="well well-sm well-dismissible">
+          <a href="#" class="close close-button" data-dismiss="well" aria-label="close">&times;</a>
+          <%= detailes %>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="taskWell">
+    <div class="well" id = "this-one">
+          <%= task %>
+    </div>
+  </script>
+
+
+  <script type="text/javascript" >
+
+    $(document).ready(function(){
+        tmpl = _.template($('#TaskBox').html());
+        tmplInfo = _.template($('#infoWell').html());
+        tmplTask = _.template($('#taskWell').html());
+
+      $("#add_input").on("click", function () {
+          var myElement = $("#input_id").val();
+          object = {
+              task: myElement,
+          };
+          $('#principal-screen').append(tmpl(object));
+          console.log(myElement);
+          var executeAfterAttach = setTimeout(function() {
+              $(".draggable").draggable();
+              clearTimeout(executeAfterAttach);
+          }, 0);
+      });
+
+        $(document).on("click", ".rmv-btn", function () {
+          var myBox = $(this).parents(".task-item").first();
+          myBox.remove();
+        });
+
+
+        $(document).on("click", ".det-btn", function () {
+          var myBox = $(this).parents(".task-item").first();
+          myBox.find(".det-input").toggle();
+          var task = $(this).parentsUntil("#this-task").find("#task").text();
+          console.log(task);
+          object3 = {
+              task: task,
+          };
+          $("#principal-screen").addClass("col-sm-6");
+          $("#hidden-col").show();
+          $("#task-panel").empty();
+          var my_current_task = tmplTask(object3);
+          $("#task-panel").append(my_current_task);
+          var myColor = $(this).parentsUntil("#this-task").find("#task-color").css("background-color");
+          $("#this-one").css("background-color", myColor);
+
+        });
+
+
+        $(document).on("click", ".add-detailes", function () {
+          var myBox2 = $(this).parents(".det-input").first();
+          var myBox3 = myBox2.find(".comments");
+          var myElement2 = myBox2.find(".input-detailes").val();
+          console.log(myElement2);
+          object2 = {
+              detailes: myElement2,
+          };
+          myBox3.prepend(tmplInfo(object2));
+        });
+
+
+        $(document).on("click", ".close-button", function () {
+            var myBox = $(this).parents(".info-well").first();
+            myBox.remove();
+        });
+
+
+        $(document).on("click", ".task-btn", function(){
+            $(this).parentsUntil("#this-task").find("#task-color").css("display","initial");
+            var myColor = $(this).css("background-color");
+            console.log(myColor);
+            $(this).parentsUntil("#this-task").find("#task-color").css("background-color",myColor);
+            $(this).parentsUntil("#this-task").find("#slider").css("background-color",myColor);
+            $(this).parentsUntil("#this-task").find("#slider").css("display","initial");
+            $(this).parentsUntil("#this-task").find("#slider").animate({"margin-left": '420px'},100);
+            $(this).parentsUntil("#this-task").find("#slider").animate({"margin-left": '15px'},50);
+            $("#task-panel").find(".well").css("background-color", myColor);
+        });
+    })
+  </script>
+
+</body>
+</html>
